@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .news {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .news img {
+            width: 100%;
+            height: auto;
+        }
+        .news-content {
+            padding: 15px;
+        }
+        .news-content h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .news-content p {
+            margin: 10px 0;
+            color: #666;
+        }
+        .news-content a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .news-content a:hover {
+            text-decoration: underline;
+        }
+        #search-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #search-form input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+        }
+        #search-form button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+        }
+        #search-form button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>News API</h1>
+    </header>
+    <div class="container">
+        <form id="search-form">
+            <input type="text" id="search-input" placeholder="Enter keyword (e.g., India)...">
+            <button type="submit">Search</button>
+        </form>
+        <div id="news-container"></div>
+    </div>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const query = document.getElementById('search-input').value;
+            if (!query) {
+                alert('Please enter a keyword!');
+                return;
+            }
+
+            const apiUrl = `https://newsapi.org/v2/everything?q=${query}&from=2025-1-28&sortBy=publishedAt&apiKey=f4efdb3e2acb4a12bb77c954c666bd1e`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const newsContainer = document.getElementById('news-container');
+                    newsContainer.innerHTML = '';
+
+                    if (data.articles && data.articles.length > 0) {
+                        data.articles.forEach(article => {
+                            const newsItem = document.createElement('div');
+                            newsItem.classList.add('news');
+
+                            newsItem.innerHTML = `
+                                <img src="${article.urlToImage || 'https://via.placeholder.com/800x400'}" alt="News Image">
+                                <div class="news-content">
+                                    <h3>${article.title}</h3>
+                                    <p>${article.description || 'No description available.'}</p>
+                                    <a href="${article.url}" target="_blank">Read more</a>
+                                </div>
+                            `;
+
+                            newsContainer.appendChild(newsItem);
+                        });
+                    } else {
+                        newsContainer.innerHTML = '<p>No news found for this keyword.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching the news:', error);
+                });
+        });
+    </script>
+</body>
+</html>
