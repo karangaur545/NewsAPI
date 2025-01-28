@@ -1,1 +1,2 @@
 # NewsAPI
+This project NewsApi
